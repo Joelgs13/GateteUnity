@@ -1,17 +1,51 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Controlador para generar objetos de tipo Bonus en posiciones aleatorias.
+/// Maneja el inicio, la detención y las condiciones relacionadas con el estado del juego.
+/// </summary>
 public class GeneradorBonusController : MonoBehaviour
 {
+    /// <summary>
+    /// Prefab del objeto Bonus que será generado.
+    /// Debe asignarse desde el Inspector.
+    /// </summary>
     [SerializeField] public GameObject bonusSpawneable;
+
+    /// <summary>
+    /// Tiempo mínimo entre la aparición de Bonus.
+    /// </summary>
     float minSpawnTime = 5f;
+
+    /// <summary>
+    /// Tiempo máximo entre la aparición de Bonus.
+    /// </summary>
     float maxSpawnTime = 15f;
+
+    /// <summary>
+    /// Límite mínimo en el eje X para la posición de aparición.
+    /// </summary>
     float minx = -2.5f;
+
+    /// <summary>
+    /// Límite máximo en el eje X para la posición de aparición.
+    /// </summary>
     float maxx = 2.5f;
 
-    private bool isSpawning = false; // Indica si el generador está activo
-    private bool isGameOver = false; // Nuevo: indica si el juego terminó
+    /// <summary>
+    /// Indica si el generador está activo.
+    /// </summary>
+    private bool isSpawning = false;
 
+    /// <summary>
+    /// Indica si el juego ha terminado.
+    /// </summary>
+    private bool isGameOver = false;
+
+    /// <summary>
+    /// Genera un objeto Bonus en una posición aleatoria dentro de los límites establecidos.
+    /// </summary>
     private void SpawnBonus()
     {
         float randomX = Random.Range(minx, maxx);
@@ -19,6 +53,10 @@ public class GeneradorBonusController : MonoBehaviour
         Instantiate(bonusSpawneable, spawnPos, Quaternion.identity);
     }
 
+    /// <summary>
+    /// Corrutina que controla el tiempo de aparición de los Bonus.
+    /// Genera Bonus mientras el generador esté activo y el juego no haya terminado.
+    /// </summary>
     private IEnumerator SpawnCoroutine()
     {
         while (isSpawning)
@@ -33,6 +71,9 @@ public class GeneradorBonusController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Inicia la generación de Bonus si el generador no está ya activo y el juego no ha terminado.
+    /// </summary>
     public void StartSpawning()
     {
         if (!isSpawning && !isGameOver) // No iniciar si el juego terminó
@@ -42,6 +83,10 @@ public class GeneradorBonusController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Detiene la generación de Bonus.
+    /// Finaliza todas las corrutinas activas asociadas al generador.
+    /// </summary>
     public void StopSpawning()
     {
         if (isSpawning)
@@ -51,13 +96,20 @@ public class GeneradorBonusController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Lógica para manejar el final del juego.
+    /// Marca el estado del juego como terminado y detiene la generación de Bonus.
+    /// </summary>
     public void GameOver()
     {
         isGameOver = true; // Marca el juego como terminado
         StopSpawning();    // Detén el spawn si está en curso
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Método llamado al inicio del ciclo de vida del objeto.
+    /// Configura la física de los Bonus y comienza la generación de objetos.
+    /// </summary>
     void Start()
     {
         bonusSpawneable.GetComponent<Rigidbody2D>().gravityScale = 1f;
